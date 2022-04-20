@@ -1,6 +1,6 @@
 import sqlite3
 import json
-from models import Post
+from models import Post, Category, User
 
 #def a get function to fetch a posts details for a single post
 def get_single_post(id):
@@ -15,7 +15,16 @@ def get_single_post(id):
             p.category_id,
             p.title,
             p.publication_date,
-            p.content
+            p.content,
+            u.first_name,
+            u.last_name,
+            u.email,
+            u.bio,
+            u.username,
+            u.password,
+            u.created_on,
+            u.active,
+            c.label
         FROM Posts p
         JOIN Users u
             ON u.id = p.user_id
@@ -27,5 +36,13 @@ def get_single_post(id):
         data = db_cursor.fetchone()
 
         post = Post(data['id'], data['user_id'], data['category_id'], data['title'], data['publication_date'], data['content'])
+
+        user = User(data['user_id'], data['first_name'], data['last_name'], data['email'], data['bio'], data['username'], data['password'], data['created_on'], data['active'])
+
+        category = Category(data['category_id'], data['label'])
+
+        post.user = user.__dict__
+        post.category = category.__dict__
+
 
     return json.dumps(post.__dict__)

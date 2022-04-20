@@ -6,3 +6,5 @@ class Post:
         self.title = title
         self.publication_date = publication_date
         self.content = content
+        self.user = None
+        self.category = None
