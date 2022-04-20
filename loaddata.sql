@@ -36,9 +36,7 @@ CREATE TABLE "Posts" (
   "category_id" INTEGER,
   "title" varchar,
   "publication_date" date,
-  "image_url" varchar,
-  "content" varchar,
-  "approved" bit
+  "content" varchar
 );
 
 CREATE TABLE "Comments" (
@@ -83,6 +81,8 @@ CREATE TABLE "Categories" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "label" varchar
 );
+
+DROP TABLE Posts
 
 INSERT INTO Categories ('label') VALUES ('News');
 INSERT INTO Tags ('label') VALUES ('JavaScript');
