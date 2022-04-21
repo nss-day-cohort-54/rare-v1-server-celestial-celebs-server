@@ -1,1 +1,2 @@
-from .categories_requests import Category
+from .categories_requests import get_all_categories
+from .tags_requests import get_all_tags
