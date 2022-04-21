@@ -3,6 +3,7 @@ import json
 from views import get_all_categories
 from views import get_single_post, get_all_posts
 from views.categories_requests import create_category
+from views.post_request import create_post
 
 from views.user import create_user, login_user
 
@@ -106,6 +107,8 @@ class HandleRequests(BaseHTTPRequestHandler):
             response = create_user(post_body)
         if resource == 'categories':
             response = create_category(post_body)
+        if resource == 'posts':
+            response = create_post(post_body)
 
         self.wfile.write(response.encode())
 
