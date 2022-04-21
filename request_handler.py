@@ -1,6 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from views.categories_requests import get_all_categories
+from views import get_single_post
 
 from views.user import create_user, login_user
 
@@ -68,7 +69,12 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f"{get_single_category(id)}"
                 else:
                     response = f"{get_all_categories()}"
-            
+            if resource == "posts":
+                if id is not None:
+                    response = f"{get_single_post(id)}"
+                else:
+                    response = f"{get_all_posts()}"
+
 
         # Response from parse_url() is a tuple with 3
         # items in it, which means the request was for
@@ -81,7 +87,7 @@ class HandleRequests(BaseHTTPRequestHandler):
             # email as a filtering value?
             if key == "q" and resource == "categories":
                 response = search_entries(value)
-            
+
         self.wfile.write(response.encode())
 
 
