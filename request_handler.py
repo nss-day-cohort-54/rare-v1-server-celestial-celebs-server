@@ -1,7 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from views import get_all_categories
-from views import get_single_post
+from views import get_single_post, get_all_posts
 
 from views.user import create_user, login_user
 
