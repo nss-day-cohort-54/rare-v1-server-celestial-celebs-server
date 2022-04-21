@@ -1,7 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from views import get_all_categories
-from views import get_single_post, get_all_posts
+from views import get_single_post, get_all_posts, get_all_tags, get_single_tag
 
 from views.user import create_user, login_user
 
@@ -74,7 +74,11 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f"{get_single_post(id)}"
                 else:
                     response = f"{get_all_posts()}"
-
+            if resource == "tags":
+                if id is not None:
+                    response = f'{get_single_tag(id)}'
+                else:
+                    response = f'{get_all_tags()}'
 
         # Response from parse_url() is a tuple with 3
         # items in it, which means the request was for
