@@ -77,16 +77,17 @@ def get_all_posts():
             ON c.id = p.category_id
         """)
 
-        data = db_cursor.fetchall()
-
-        post = Post(data['id'], data['user_id'], data['category_id'], data['title'], data['publication_date'], data['content'])
-
-        user = User(data['user_id'], data['first_name'], data['last_name'], data['email'], data['bio'], data['username'], data['password'], data['created_on'], data['active'])
-
-        category = Category(data['category_id'], data['label'])
-
-        post.user = user.__dict__
-        post.category = category.__dict__
 
 
-    return json.dumps(post.__dict__)
+        posts = []
+        dataset = db_cursor.fetchall()
+        for row in dataset:
+            post = Post(row['id'], row['user_id'], row['category_id'], row['title'], row['publication_date'], row['content'])
+            user = User(row['user_id'], row['first_name'], row['last_name'], row['email'], row['bio'], row['username'], row['password'], row['created_on'], row['active'])
+            category = Category(row['category_id'], row['label'])
+            post.user = user.__dict__
+            post.category = category.__dict__
+            posts.append(post.__dict__)
+
+
+    return json.dumps(posts)
