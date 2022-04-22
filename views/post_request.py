@@ -91,3 +91,14 @@ def get_all_posts():
 
 
     return json.dumps(posts)
+
+
+#def a get function to delete a post and updates the post list
+def delete_post(id):
+     with sqlite3.connect("./dailyjournal.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        DELETE FROM Posts
+        WHERE id = ?
+        """, (id, ))
