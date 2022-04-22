@@ -95,10 +95,26 @@ def get_all_posts():
 
 #def a get function to delete a post and updates the post list
 def delete_post(id):
-     with sqlite3.connect("./dailyjournal.sqlite3") as conn:
+     with sqlite3.connect("./db.sqlite3") as conn:
         db_cursor = conn.cursor()
 
         db_cursor.execute("""
         DELETE FROM Posts
         WHERE id = ?
         """, (id, ))
+def create_post(new_post):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        INSERT INTO Posts
+            ( user_id, category_id, title, publication_date, content )
+        VALUES
+            ( ?, ?, ?, ?, ? );
+        """, (new_post['user_id'], new_post['category_id'], new_post['title'], new_post['publication_date'], new_post['content']))
+
+        id = db_cursor.lastrowid
+
+        new_post['id'] = id
+
+    return json.dumps(new_post)

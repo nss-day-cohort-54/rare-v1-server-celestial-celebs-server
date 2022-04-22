@@ -1,6 +1,10 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-from views.categories_requests import get_all_categories
+from views import get_all_categories
+from views import get_single_post, get_all_posts, get_all_tags, get_single_tag
+from views.categories_requests import create_category
+from views.post_request import create_post
+from views.tags_requests import create_tag
 
 from views.user import create_user, login_user
 from views.post_request import get_all_posts, get_single_post, delete_post
@@ -105,6 +109,12 @@ class HandleRequests(BaseHTTPRequestHandler):
             response = login_user(post_body)
         if resource == 'register':
             response = create_user(post_body)
+        if resource == 'categories':
+            response = create_category(post_body)
+        if resource == 'posts':
+            response = create_post(post_body)
+        if resource == 'tags':
+            response = create_tag(post_body)
 
         self.wfile.write(response.encode())
 
@@ -117,7 +127,7 @@ class HandleRequests(BaseHTTPRequestHandler):
         self._set_headers(204)
 
         # Parse the URL
-        (resource, id) = self.parse_url(self.path)
+        (resource, id) = self.parse_url()
 
         # Delete a single post from the list
         if resource == "posts":
