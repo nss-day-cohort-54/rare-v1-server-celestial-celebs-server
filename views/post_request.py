@@ -1,6 +1,8 @@
 import sqlite3
 import json
 from models import Post, Category, User
+from models import PostTags
+from models.tags import Tags
 
 #def a get function to fetch a posts details for a single post
 def get_single_post(id):
@@ -92,6 +94,66 @@ def get_all_posts():
 
     return json.dumps(posts)
 
+def get_all_user_posts(id):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        SELECT
+            p.id,
+            p.user_id,
+            p.category_id,
+            p.title,
+            p.publication_date,
+            p.content,
+            u.first_name,
+            u.last_name,
+            u.email,
+            u.bio,
+            u.username,
+            u.password,
+            u.created_on,
+            u.active,
+            c.label
+        FROM Posts p
+        JOIN Users u
+            ON u.id = p.user_id
+        JOIN Categories c
+            ON c.id = p.category_id
+        WHERE p.user_id = ?
+        """, ( id ,))
+
+
+
+        posts = []
+        dataset = db_cursor.fetchall()
+        for row in dataset:
+            post = Post(row['id'], row['user_id'], row['category_id'], row['title'], row['publication_date'], row['content'])
+            user = User(row['user_id'], row['first_name'], row['last_name'], row['email'], row['bio'], row['username'], row['password'], row['created_on'], row['active'])
+            category = Category(row['category_id'], row['label'])
+            
+            post.user = user.__dict__
+            post.category = category.__dict__
+            posts.append(post.__dict__)
+            
+            db_cursor.execute("""
+                SELECT t.id, t.label, pt.tag_id, pt.post_id
+                FROM PostTags pt
+                JOIN tags t ON t.id = pt.tag_id
+                WHERE pt.post_id = ?
+            """, (post.id, ))
+            
+            tags = []
+            
+            tag_dataset = db_cursor.fetchall()
+            
+            for tag_row in tag_dataset:
+                tags.append(tag_row['label'])
+                
+            post.tags = tags
+
+    return json.dumps(posts)
 def create_post(new_post):
     with sqlite3.connect("./db.sqlite3") as conn:
         db_cursor = conn.cursor()
