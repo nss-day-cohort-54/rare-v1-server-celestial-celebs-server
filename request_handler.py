@@ -1,9 +1,10 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from views import get_all_categories
-from views import get_single_post, get_all_posts
+from views import get_single_post, get_all_posts, get_all_tags, get_single_tag
 from views.categories_requests import create_category
 from views.post_request import create_post
+from views.tags_requests import create_tag
 
 from views.user import create_user, login_user
 
@@ -76,7 +77,11 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f"{get_single_post(id)}"
                 else:
                     response = f"{get_all_posts()}"
-
+            if resource == "tags":
+                if id is not None:
+                    response = f'{get_single_tag(id)}'
+                else:
+                    response = f'{get_all_tags()}'
 
         # Response from parse_url() is a tuple with 3
         # items in it, which means the request was for
@@ -109,6 +114,8 @@ class HandleRequests(BaseHTTPRequestHandler):
             response = create_category(post_body)
         if resource == 'posts':
             response = create_post(post_body)
+        if resource == 'tags':
+            response = create_tag(post_body)
 
         self.wfile.write(response.encode())
 
