@@ -5,6 +5,7 @@ from models import PostTags
 from models.tags import Tags
 
 #def a get function to fetch a posts details for a single post
+# fetch includes post, user and category 
 def get_single_post(id):
     with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
@@ -49,7 +50,7 @@ def get_single_post(id):
 
     return json.dumps(post.__dict__)
 
-
+# get all posts with users and category
 def get_all_posts():
     with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
@@ -94,6 +95,7 @@ def get_all_posts():
 
     return json.dumps(posts)
 
+# get posts specific to logged in user
 def get_all_user_posts(id):
     with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
@@ -154,6 +156,8 @@ def get_all_user_posts(id):
             post.tags = tags
 
     return json.dumps(posts)
+
+# create a new post
 def create_post(new_post):
     with sqlite3.connect("./db.sqlite3") as conn:
         db_cursor = conn.cursor()

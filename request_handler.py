@@ -1,12 +1,11 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-from views import get_all_categories
-from views import get_single_post, get_all_posts, get_all_tags, get_single_tag
-from views.categories_requests import create_category
+from views import get_all_categories, get_single_post, get_all_posts, get_all_tags, get_single_tag, create_category
+from views.categories_requests import get_single_category
 from views.post_request import edit_post, get_all_user_posts, create_post
 from views.tags_requests import create_tag
-
 from views.user import create_user, login_user
+from views.user_requests import get_all_users, get_single_user
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -63,7 +62,7 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         # Response from parse_url() is a tuple with 2
         # items in it, which means the request was for
-        # `/animals` or `/animals/2`
+        # `/posts` or `/posts/2`
         if len(parsed) == 2:
             ( resource, id ) = parsed
 
@@ -82,10 +81,15 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f'{get_single_tag(id)}'
                 else:
                     response = f'{get_all_tags()}'
+            if resource == "users":
+                if id is not None:
+                    response = f'{get_single_user(id)}'
+                else:
+                    response = f'{get_all_users()}'
 
         # Response from parse_url() is a tuple with 3
         # items in it, which means the request was for
-        # `/resource?parameter=value`
+        # `/post?user_id=value`
         elif len(parsed) == 3:
             ( resource, key, value ) = parsed
 
@@ -93,8 +97,9 @@ class HandleRequests(BaseHTTPRequestHandler):
             # Is the resource `customers` and was there a
             # query parameter that specified the customer
             # email as a filtering value?
-            if key == "q" and resource == "categories":
-                response = search_entries(value)
+            
+            # if key == "q" and resource == "categories":
+            #     response = search_entries(value)
             if key == "user_id":
                 response = get_all_user_posts(value)
 
