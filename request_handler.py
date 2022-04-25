@@ -7,7 +7,11 @@ from views.post_request import get_all_user_posts, create_post, get_posts_by_cat
 
 from views.tags_requests import create_tag
 from views.user import create_user, login_user
+<<<<<<< HEAD
 from views.user_requests import get_all_users, get_single_user
+=======
+from views.post_request import get_all_posts, get_single_post, delete_post
+>>>>>>> main
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -59,20 +63,28 @@ class HandleRequests(BaseHTTPRequestHandler):
         """Handle Get requests to the server"""
         self._set_headers(200)
         response = {}
-        # Parse URL and store entire tuple in a variable
         parsed = self.parse_url()
 
         # Response from parse_url() is a tuple with 2
         # items in it, which means the request was for
         # `/posts` or `/posts/2`
         if len(parsed) == 2:
-            ( resource, id ) = parsed
+            (resource, id) = parsed
+
+            if resource == "posts":
+                if id is not None:
+                    response = f"{get_single_post(id)}"
+                else:
+                    response = f"{get_all_posts()}"
+                    
+
 
             if resource == "categories":
                 if id is not None:
                     response = f"{get_single_category(id)}"
                 else:
                     response = f"{get_all_categories()}"
+<<<<<<< HEAD
             if resource == "posts":
                 if id is not None:
                     response = f"{get_single_post(id)}"
@@ -88,6 +100,9 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f'{get_single_user(id)}'
                 else:
                     response = f'{get_all_users()}'
+=======
+            
+>>>>>>> main
 
         # Response from parse_url() is a tuple with 3
         # items in it, which means the request was for
@@ -99,9 +114,15 @@ class HandleRequests(BaseHTTPRequestHandler):
             # Is the resource `customers` and was there a
             # query parameter that specified the customer
             # email as a filtering value?
+<<<<<<< HEAD
             
             # if key == "q" and resource == "categories":
             #     response = search_entries(value)
+=======
+            if key == "q" and resource == "categories":
+                response = search_entries(value)
+            
+>>>>>>> main
             if key == "user_id":
                 response = get_all_user_posts(value)
             if key == "category_id" and resource == "posts":
@@ -153,8 +174,18 @@ class HandleRequests(BaseHTTPRequestHandler):
         self.wfile.write("".encode())
 
     def do_DELETE(self):
-        """Handle DELETE Requests"""
-        pass
+        # Set a 204 response code
+        self._set_headers(204)
+
+        # Parse the URL
+        (resource, id) = self.parse_url()
+
+        # Delete a single post from the list
+        if resource == "posts":
+            delete_post(id)
+            
+    # Encode the new entry and send in response
+        self.wfile.write("".encode())
 
 
 def main():
