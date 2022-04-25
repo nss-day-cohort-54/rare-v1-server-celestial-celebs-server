@@ -215,3 +215,33 @@ def create_post(new_post):
         new_post['id'] = id
 
     return json.dumps(new_post)
+
+def edit_post(id, edited_post):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        UPDATE posts
+            SET
+                user_id = ?,
+                category_id = ?,
+                title = ?,
+                publication_date = ?,
+                content = ?
+        WHERE id = ?
+        """, (edited_post['user_id'], edited_post['category_id'], 
+              edited_post['title'], edited_post['publication_date'], 
+              edited_post['content'], id))
+
+        # Were any rows affected?
+        # Did the client send an `id` that exists?
+        rows_affected = db_cursor.rowcount
+
+    if rows_affected == 0:
+        # Forces 404 response by main module
+        return False
+    else:
+        # Forces 204 response by main module
+        return True
+        
+        
