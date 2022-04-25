@@ -4,6 +4,7 @@ from models import Post, Category, User, post_tags
 from models import PostTags, Tags
 
 #def a get function to fetch a posts details for a single post
+# fetch includes post, user and category 
 def get_single_post(id):
     with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
@@ -38,7 +39,7 @@ def get_single_post(id):
 
         post = Post(data['id'], data['user_id'], data['category_id'], data['title'], data['publication_date'], data['content'])
 
-        user = User(data['user_id'], data['first_name'], data['last_name'], data['email'], data['bio'], data['username'], data['password'], data['created_on'], data['active'])
+        user = User(data['user_id'], data['first_name'], data['last_name'], data['email'], data['bio'], data['username'], data['password'], data['profile_image_url'], data['created_on'], data['active'])
 
         category = Category(data['category_id'], data['label'])
 
@@ -48,7 +49,7 @@ def get_single_post(id):
 
     return json.dumps(post.__dict__)
 
-
+# get all posts with users and category
 def get_all_posts():
     with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
@@ -68,6 +69,7 @@ def get_all_posts():
             u.bio,
             u.username,
             u.password,
+            u.profile_image_url,
             u.created_on,
             u.active,
             c.label
@@ -108,7 +110,7 @@ def get_all_posts():
                 tags.append(tag.__dict__)
 
             post = Post(row['id'], row['user_id'], row['category_id'], row['title'], row['publication_date'], row['content'])
-            user = User(row['user_id'], row['first_name'], row['last_name'], row['email'], row['bio'], row['username'], row['password'], row['created_on'], row['active'])
+            user = User(row['user_id'], row['first_name'], row['last_name'], row['email'], row['bio'], row['username'], row['password'], row['profile_image_url'], row['created_on'], row['active'])
             category = Category(row['category_id'], row['label'])
             post.user = user.__dict__
             post.category = category.__dict__
@@ -118,6 +120,16 @@ def get_all_posts():
 
     return json.dumps(posts)
 
+
+#def a get function to delete a post and updates the post list
+def delete_post(id):
+     with sqlite3.connect("./db.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        DELETE FROM Posts
+        WHERE id = ?
+        """, (id, ))
 def get_all_user_posts(id):
     with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
@@ -137,6 +149,7 @@ def get_all_user_posts(id):
             u.bio,
             u.username,
             u.password,
+            u.profile_image_url,
             u.created_on,
             u.active,
             c.label
@@ -154,7 +167,7 @@ def get_all_user_posts(id):
         dataset = db_cursor.fetchall()
         for row in dataset:
             post = Post(row['id'], row['user_id'], row['category_id'], row['title'], row['publication_date'], row['content'])
-            user = User(row['user_id'], row['first_name'], row['last_name'], row['email'], row['bio'], row['username'], row['password'], row['created_on'], row['active'])
+            user = User(row['user_id'], row['first_name'], row['last_name'], row['email'], row['bio'], row['username'], row['password'], row['profile_image_url'], row['created_on'], row['active'])
             category = Category(row['category_id'], row['label'])
 
             post.user = user.__dict__
@@ -214,7 +227,7 @@ def get_posts_by_category(category_id):
         dataset = db_cursor.fetchall()
         for row in dataset:
             post = Post(row['id'], row['user_id'], row['category_id'], row['title'], row['publication_date'], row['content'])
-            user = User(row['user_id'], row['first_name'], row['last_name'], row['email'], row['bio'], row['username'], row['password'], row['created_on'], row['active'])
+            user = User(row['user_id'], row['first_name'], row['last_name'], row['email'], row['bio'], row['username'], row['password'], row['profile_image_url'], row['created_on'], row['active'])
             category = Category(row['category_id'], row['label'])
             post.user = user.__dict__
             post.category = category.__dict__
@@ -247,6 +260,7 @@ def create_post(new_post):
             """, (id, tag['id']))
 
     return json.dumps(new_post)
+
 
 def edit_post(id, edited_post):
     with sqlite3.connect("./db.sqlite3") as conn:

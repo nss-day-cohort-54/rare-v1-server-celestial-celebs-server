@@ -1,12 +1,10 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-from views import get_single_post, get_all_posts, get_all_tags, get_single_tag, get_all_categories
-from views.categories_requests import create_category
-from views.post_request import get_all_user_posts, create_post, get_posts_by_category, edit_post
-
+from views import get_single_post, get_all_posts, get_all_tags, get_single_tag, get_all_categories, create_category, get_single_category
+from views.post_request import get_all_user_posts, create_post, get_posts_by_category, edit_post, delete_post
 from views.tags_requests import create_tag
-
 from views.user import create_user, login_user
+from views.user_requests import get_all_users, get_single_user
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -58,15 +56,19 @@ class HandleRequests(BaseHTTPRequestHandler):
         """Handle Get requests to the server"""
         self._set_headers(200)
         response = {}
-        # Parse URL and store entire tuple in a variable
         parsed = self.parse_url()
 
         # Response from parse_url() is a tuple with 2
         # items in it, which means the request was for
-        # `/animals` or `/animals/2`
+        # `/posts` or `/posts/2`
         if len(parsed) == 2:
-            ( resource, id ) = parsed
+            (resource, id) = parsed
 
+            if resource == "posts":
+                if id is not None:
+                    response = f"{get_single_post(id)}"
+                else:
+                    response = f"{get_all_posts()}"
             if resource == "categories":
                 if id is not None:
                     response = f"{get_single_category(id)}"
@@ -82,10 +84,15 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f'{get_single_tag(id)}'
                 else:
                     response = f'{get_all_tags()}'
+            if resource == "users":
+                if id is not None:
+                    response = f'{get_single_user(id)}'
+                else:
+                    response = f'{get_all_users()}'
 
         # Response from parse_url() is a tuple with 3
         # items in it, which means the request was for
-        # `/resource?parameter=value`
+        # `/post?user_id=value`
         elif len(parsed) == 3:
             ( resource, key, value ) = parsed
 
@@ -93,8 +100,9 @@ class HandleRequests(BaseHTTPRequestHandler):
             # Is the resource `customers` and was there a
             # query parameter that specified the customer
             # email as a filtering value?
-            if key == "q" and resource == "categories":
-                response = search_entries(value)
+
+            # if key == "q" and resource == "categories":
+            #     response = search_entries(value)
             if key == "user_id":
                 response = get_all_user_posts(value)
             if key == "category_id" and resource == "posts":
@@ -146,8 +154,18 @@ class HandleRequests(BaseHTTPRequestHandler):
         self.wfile.write("".encode())
 
     def do_DELETE(self):
-        """Handle DELETE Requests"""
-        pass
+        # Set a 204 response code
+        self._set_headers(204)
+
+        # Parse the URL
+        (resource, id) = self.parse_url()
+
+        # Delete a single post from the list
+        if resource == "posts":
+            delete_post(id)
+
+    # Encode the new entry and send in response
+        self.wfile.write("".encode())
 
 
 def main():
