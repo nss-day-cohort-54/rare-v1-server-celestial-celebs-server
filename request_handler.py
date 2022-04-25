@@ -7,11 +7,8 @@ from views.post_request import get_all_user_posts, create_post, get_posts_by_cat
 
 from views.tags_requests import create_tag
 from views.user import create_user, login_user
-<<<<<<< HEAD
 from views.user_requests import get_all_users, get_single_user
-=======
 from views.post_request import get_all_posts, get_single_post, delete_post
->>>>>>> main
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -84,7 +81,6 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f"{get_single_category(id)}"
                 else:
                     response = f"{get_all_categories()}"
-<<<<<<< HEAD
             if resource == "posts":
                 if id is not None:
                     response = f"{get_single_post(id)}"
@@ -100,9 +96,6 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f'{get_single_user(id)}'
                 else:
                     response = f'{get_all_users()}'
-=======
-            
->>>>>>> main
 
         # Response from parse_url() is a tuple with 3
         # items in it, which means the request was for
@@ -114,15 +107,9 @@ class HandleRequests(BaseHTTPRequestHandler):
             # Is the resource `customers` and was there a
             # query parameter that specified the customer
             # email as a filtering value?
-<<<<<<< HEAD
             
             # if key == "q" and resource == "categories":
             #     response = search_entries(value)
-=======
-            if key == "q" and resource == "categories":
-                response = search_entries(value)
-            
->>>>>>> main
             if key == "user_id":
                 response = get_all_user_posts(value)
             if key == "category_id" and resource == "posts":
