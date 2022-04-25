@@ -94,6 +94,16 @@ def get_all_posts():
 
     return json.dumps(posts)
 
+
+#def a get function to delete a post and updates the post list
+def delete_post(id):
+     with sqlite3.connect("./db.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        DELETE FROM Posts
+        WHERE id = ?
+        """, (id, ))
 def get_all_user_posts(id):
     with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
@@ -215,6 +225,7 @@ def create_post(new_post):
         new_post['id'] = id
 
     return json.dumps(new_post)
+
 
 def edit_post(id, edited_post):
     with sqlite3.connect("./db.sqlite3") as conn:
