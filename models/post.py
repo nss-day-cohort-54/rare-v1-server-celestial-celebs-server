@@ -8,3 +8,4 @@ class Post:
         self.content = content
         self.user = None
         self.category = None
+        self.tags = None

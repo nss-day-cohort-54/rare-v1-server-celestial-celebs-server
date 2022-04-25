@@ -1,4 +1,3 @@
-
 class PostTags():
     def __init__(self, id, post_id, tag_id):
         self.id = id
