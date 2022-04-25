@@ -7,6 +7,6 @@ class User():
         self.bio = bio
         self.username = username
         self.password = password
-        self.profile_image_url ='https://static.wikia.nocookie.net/disney/images/9/93/Ernestpworrell2017.jpg/revision/latest?cb=20170103211920'
+        self.profile_image_url = profile_image_url
         self.created_on = created_on
         self.active = active

@@ -70,6 +70,7 @@ def get_all_posts():
             u.bio,
             u.username,
             u.password,
+            u.profile_image_url,
             u.created_on,
             u.active,
             c.label
@@ -124,6 +125,7 @@ def get_all_user_posts(id):
             u.bio,
             u.username,
             u.password,
+            u.profile_image_url,
             u.created_on,
             u.active,
             c.label

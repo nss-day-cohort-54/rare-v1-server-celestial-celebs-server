@@ -3,8 +3,7 @@ import json
 from views import get_all_categories
 from views import get_single_post, get_all_posts, get_all_tags, get_single_tag, create_category
 from views.categories_requests import get_single_category
-from views.post_request import get_all_user_posts, create_post, get_posts_by_category, edit_post, get_all_posts, get_single_post, delete_post
-
+from views.post_request import get_all_user_posts, create_post, get_posts_by_category, edit_post, delete_post
 from views.tags_requests import create_tag
 from views.user import create_user, login_user
 from views.user_requests import get_all_users, get_single_user
@@ -72,9 +71,6 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f"{get_single_post(id)}"
                 else:
                     response = f"{get_all_posts()}"
-                    
-
-
             if resource == "categories":
                 if id is not None:
                     response = f"{get_single_category(id)}"
