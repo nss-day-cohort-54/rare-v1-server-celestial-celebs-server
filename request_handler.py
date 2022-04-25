@@ -3,7 +3,7 @@ import json
 from views import get_all_categories
 from views import get_single_post, get_all_posts, get_all_tags, get_single_tag
 from views.categories_requests import create_category
-from views.post_request import create_post
+from views.post_request import edit_post, get_all_user_posts, create_post
 from views.tags_requests import create_tag
 
 from views.user import create_user, login_user
@@ -88,12 +88,16 @@ class HandleRequests(BaseHTTPRequestHandler):
         elif len(parsed) == 3:
             ( resource, key, value ) = parsed
 
+            
             # Is the resource `customers` and was there a
             # query parameter that specified the customer
             # email as a filtering value?
             if key == "q" and resource == "categories":
                 response = search_entries(value)
             
+            if key == "user_id":
+                response = get_all_user_posts(value)
+
         self.wfile.write(response.encode())
 
 
@@ -119,8 +123,25 @@ class HandleRequests(BaseHTTPRequestHandler):
         self.wfile.write(response.encode())
 
     def do_PUT(self):
-        """Handles PUT requests to the server"""
-        pass
+        content_len = int(self.headers.get('content-length', 0))
+        post_body = self.rfile.read(content_len)
+        post_body = json.loads(post_body)
+
+        # Parse the URL
+        (resource, id) = self.parse_url()
+
+        success = False
+
+        if resource == "posts":
+            success = edit_post(id, post_body)
+        
+
+        if success:
+            self._set_headers(204)
+        else:
+            self._set_headers(404)
+
+        self.wfile.write("".encode())
 
     def do_DELETE(self):
         # Set a 204 response code
