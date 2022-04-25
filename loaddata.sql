@@ -94,3 +94,6 @@ INSERT INTO Posts ('user_id', 'category_id', 'title', 'publication_date', 'conte
 INSERT INTO PostTags ('post_id', 'tag_id') VALUES (1, 2)
 INSERT INTO PostTags ('post_id', 'tag_id') VALUES (1, 4)
 INSERT INTO PostTags ('post_id', 'tag_id') VALUES (2, 3)
+
+DELETE FROM Posts
+WHERE id = 9
