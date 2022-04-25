@@ -1,8 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-from views import get_all_categories
-from views import get_single_post, get_all_posts, get_all_tags, get_single_tag, create_category
-from views.categories_requests import get_single_category
+from views import get_single_post, get_all_posts, get_all_tags, get_single_tag, get_all_categories, create_category, get_single_category
 from views.post_request import get_all_user_posts, create_post, get_posts_by_category, edit_post, delete_post
 from views.tags_requests import create_tag
 from views.user import create_user, login_user
@@ -102,7 +100,7 @@ class HandleRequests(BaseHTTPRequestHandler):
             # Is the resource `customers` and was there a
             # query parameter that specified the customer
             # email as a filtering value?
-            
+
             # if key == "q" and resource == "categories":
             #     response = search_entries(value)
             if key == "user_id":
@@ -146,7 +144,7 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         if resource == "posts":
             success = edit_post(id, post_body)
-        
+
 
         if success:
             self._set_headers(204)
@@ -165,7 +163,7 @@ class HandleRequests(BaseHTTPRequestHandler):
         # Delete a single post from the list
         if resource == "posts":
             delete_post(id)
-            
+
     # Encode the new entry and send in response
         self.wfile.write("".encode())
 

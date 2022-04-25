@@ -1,11 +1,10 @@
 import sqlite3
 import json
 from models import Post, Category, User, post_tags
-from models import PostTags
-from models.tags import Tags
+from models import PostTags, Tags
 
 #def a get function to fetch a posts details for a single post
-# fetch includes post, user and category 
+# fetch includes post, user and category
 def get_single_post(id):
     with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
@@ -40,7 +39,7 @@ def get_single_post(id):
 
         post = Post(data['id'], data['user_id'], data['category_id'], data['title'], data['publication_date'], data['content'])
 
-        user = User(data['user_id'], data['first_name'], data['last_name'], data['email'], data['bio'], data['username'], data['password'], data['profile_image_url'], data['created_on'], data['active'])
+        user = User(data['user_id'], data['first_name'], data['last_name'], data['email'], data['bio'], data['username'], data['password'], data['created_on'], data['active'])
 
         category = Category(data['category_id'], data['label'])
 
@@ -81,16 +80,41 @@ def get_all_posts():
             ON c.id = p.category_id
         """)
 
-
-
         posts = []
+
         dataset = db_cursor.fetchall()
+
         for row in dataset:
+
+            rowId = row['id']
+
+            db_cursor.execute("""
+            SELECT
+                t.id,
+                t.label
+            FROM PostTags pt
+            JOIN Tags t
+                on t.id = pt.tag_id
+            JOIN Posts p
+                on p.id = ?
+            WHERE pt.post_id = p.id
+            GROUP BY t.id
+            """, ( rowId, ))
+
+            data = db_cursor.fetchall()
+
+            tags= []
+
+            for current_tag in data:
+                tag = Tags(current_tag['id'], current_tag['label'])
+                tags.append(tag.__dict__)
+
             post = Post(row['id'], row['user_id'], row['category_id'], row['title'], row['publication_date'], row['content'])
             user = User(row['user_id'], row['first_name'], row['last_name'], row['email'], row['bio'], row['username'], row['password'], row['profile_image_url'], row['created_on'], row['active'])
             category = Category(row['category_id'], row['label'])
             post.user = user.__dict__
             post.category = category.__dict__
+            post.tags = tags
             posts.append(post.__dict__)
 
 
@@ -227,6 +251,14 @@ def create_post(new_post):
 
         new_post['id'] = id
 
+        for tag in new_post['tags']:
+            db_cursor.execute("""
+            INSERT INTO PostTags
+                (post_id, tag_id)
+            VALUES
+                ( ?, ? );
+            """, (id, tag))
+
     return json.dumps(new_post)
 
 
@@ -243,8 +275,8 @@ def edit_post(id, edited_post):
                 publication_date = ?,
                 content = ?
         WHERE id = ?
-        """, (edited_post['user_id'], edited_post['category_id'], 
-              edited_post['title'], edited_post['publication_date'], 
+        """, (edited_post['user_id'], edited_post['category_id'],
+              edited_post['title'], edited_post['publication_date'],
               edited_post['content'], id))
 
         # Were any rows affected?
@@ -257,5 +289,5 @@ def edit_post(id, edited_post):
     else:
         # Forces 204 response by main module
         return True
-        
-        
+
+

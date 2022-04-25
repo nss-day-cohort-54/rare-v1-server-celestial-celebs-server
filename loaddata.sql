@@ -88,5 +88,12 @@ INSERT INTO Categories ('label') VALUES ('News');
 INSERT INTO Tags ('label') VALUES ('JavaScript');
 INSERT INTO Tags ('label') VALUES ('Coding');
 INSERT INTO Tags ('label') VALUES ('Python');
+INSERT INTO Tags ('label') VALUES ('SQL');
 INSERT INTO Reactions ('label', 'image_url') VALUES ('happy', 'https://pngtree.com/so/happy');
 INSERT INTO Posts ('user_id', 'category_id', 'title', 'publication_date', 'content') VALUES (1, 1, 'Test post', '2022-04-20', 'Testing....')
+INSERT INTO PostTags ('post_id', 'tag_id') VALUES (1, 2)
+INSERT INTO PostTags ('post_id', 'tag_id') VALUES (1, 4)
+INSERT INTO PostTags ('post_id', 'tag_id') VALUES (2, 3)
+
+DELETE FROM Posts
+WHERE id = 9
