@@ -95,9 +95,6 @@ def get_all_posts():
 
     return json.dumps(posts)
 
-<<<<<<< HEAD
-# get posts specific to logged in user
-=======
 
 #def a get function to delete a post and updates the post list
 def delete_post(id):
@@ -108,7 +105,6 @@ def delete_post(id):
         DELETE FROM Posts
         WHERE id = ?
         """, (id, ))
->>>>>>> main
 def get_all_user_posts(id):
     with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
