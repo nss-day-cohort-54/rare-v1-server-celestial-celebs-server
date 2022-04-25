@@ -3,7 +3,8 @@ import json
 from views import get_all_categories
 from views import get_single_post, get_all_posts, get_all_tags, get_single_tag
 from views.categories_requests import create_category
-from views.post_request import edit_post, get_all_user_posts, create_post
+from views.post_request import get_all_user_posts, create_post, get_posts_by_category, edit_post
+
 from views.tags_requests import create_tag
 
 from views.user import create_user, login_user
@@ -88,7 +89,7 @@ class HandleRequests(BaseHTTPRequestHandler):
         elif len(parsed) == 3:
             ( resource, key, value ) = parsed
 
-            
+
             # Is the resource `customers` and was there a
             # query parameter that specified the customer
             # email as a filtering value?
@@ -97,6 +98,8 @@ class HandleRequests(BaseHTTPRequestHandler):
             
             if key == "user_id":
                 response = get_all_user_posts(value)
+            if key == "category_id" and resource == "posts":
+                response = get_posts_by_category(value)
 
         self.wfile.write(response.encode())
 
