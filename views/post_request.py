@@ -26,12 +26,17 @@ def get_single_post(id):
             u.password,
             u.created_on,
             u.active,
-            c.label
+            c.label,
+            t.label
         FROM Posts p
         JOIN Users u
             ON u.id = p.user_id
         JOIN Categories c
             ON c.id = p.category_id
+        JOIN PostTags pt
+            ON p.id = pt.post_id
+        JOIN Tags t
+            ON t.id = pt.tag_id
         WHERE p.id = ?
         """, ( id, ))
 
@@ -42,6 +47,10 @@ def get_single_post(id):
         user = User(data['user_id'], data['first_name'], data['last_name'], data['email'], data['bio'], data['username'], data['password'], data['created_on'], data['active'])
 
         category = Category(data['category_id'], data['label'])
+
+        postTag = PostTags(data['id'], data['post_id'], data['tag_id'])
+
+        tag = Tags(data['id'], data['label'])
 
         post.user = user.__dict__
         post.category = category.__dict__
@@ -130,6 +139,7 @@ def delete_post(id):
         DELETE FROM Posts
         WHERE id = ?
         """, (id, ))
+
 def get_all_user_posts(id):
     with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
