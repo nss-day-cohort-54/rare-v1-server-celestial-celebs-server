@@ -218,6 +218,7 @@ def get_posts_by_category(category_id):
             u.bio,
             u.username,
             u.password,
+            u.profile_image_url,
             u.created_on,
             u.active,
             c.label
@@ -233,7 +234,7 @@ def get_posts_by_category(category_id):
         dataset = db_cursor.fetchall()
         for row in dataset:
             post = Post(row['id'], row['user_id'], row['category_id'], row['title'], row['publication_date'], row['content'])
-            user = User(row['user_id'], row['first_name'], row['last_name'], row['email'], row['bio'], row['username'], row['password'], row['profile_image_url'], row['created_on'], row['active'])
+            user = User(row['id'], row['first_name'], row['last_name'], row['email'], row['bio'], row['username'], row['password'], row['profile_image_url'], row['created_on'], row['active'])
             category = Category(row['category_id'], row['label'])
             post.user = user.__dict__
             post.category = category.__dict__
