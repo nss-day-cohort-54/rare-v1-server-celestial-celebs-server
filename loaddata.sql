@@ -97,3 +97,4 @@ INSERT INTO PostTags ('post_id', 'tag_id') VALUES (2, 3)
 
 DELETE FROM Posts
 WHERE id = 9
+
