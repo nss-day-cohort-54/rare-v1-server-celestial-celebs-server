@@ -19,9 +19,9 @@ def get_all_users():
             u.bio,
             u.username,
             u.password,
-            u.profile_image_url,
             u.created_on,
-            u.active
+            u.active,
+            u.profile_image_url
         FROM Users u
         ORDER BY u.username ASC
         """)
@@ -29,7 +29,7 @@ def get_all_users():
         users = []
         dataset = db_cursor.fetchall()
         for row in dataset:
-            user = User(row['id'], row['first_name'], row['last_name'], row['email'], row['bio'], row['username'], row['password'], row['profile_image_url'], row['created_on'], row['active'])
+            user = User(row['id'], row['first_name'], row['last_name'], row['email'], row['bio'], row['username'], row['password'], row['active'], row['created_on'], row['profile_image_url'])
             users.append(user.__dict__)
     return json.dumps(users)
 
@@ -55,7 +55,7 @@ def get_single_user(id):
         """, ( id, ))
 
         data = db_cursor.fetchone()
-        user = User(data['id'], data['first_name'], data['last_name'], data['email'], data['bio'], data['username'], data['password'], data['profile_image_url'], data['created_on'], data['active'])
+        user = User(data['id'], data['first_name'], data['last_name'], data['email'], data['bio'], data['username'], data['password'], data['created_on'], data['active'], data['profile_image_url'])
             
 
 
