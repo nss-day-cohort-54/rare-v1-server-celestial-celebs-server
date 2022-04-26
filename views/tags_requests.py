@@ -1,5 +1,6 @@
 import json
 import sqlite3
+from models.post_tags import PostTags
 from models.tags import Tags
 
 
@@ -21,6 +22,25 @@ def get_all_tags():
             tag = Tags(row['id'], row['label'])
             tags.append(tag.__dict__)
     return json.dumps(tags)
+
+def get_all_postTags():
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        SELECT
+            pt.id,
+            pt.post_id,
+            pt.tag_id
+        FROM PostTags pt
+        """)
+
+        postTags = []
+        dataset = db_cursor.fetchall()
+        for row in dataset:
+            tag = PostTags(row['id'], row['post_id'], row['tag_id'])
+            postTags.append(tag.__dict__)
+    return json.dumps(postTags)
 
 def get_single_tag(id):
     with sqlite3.connect("./db.sqlite3") as conn:
