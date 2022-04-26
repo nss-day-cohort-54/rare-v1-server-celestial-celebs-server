@@ -24,6 +24,7 @@ def get_single_post(id):
             u.bio,
             u.username,
             u.password,
+            u.profile_image_url,
             u.created_on,
             u.active,
             c.label
@@ -39,7 +40,7 @@ def get_single_post(id):
 
         post = Post(data['id'], data['user_id'], data['category_id'], data['title'], data['publication_date'], data['content'])
 
-        user = User(data['user_id'], data['first_name'], data['last_name'], data['email'], data['bio'], data['username'], data['password'], data['created_on'], data['active'])
+        user = User(data['user_id'], data['first_name'], data['last_name'], data['email'], data['bio'], data['username'], data['password'], data['profile_image_url'], data['created_on'], data['active'])
 
         category = Category(data['category_id'], data['label'])
 
@@ -166,8 +167,13 @@ def get_all_user_posts(id):
         posts = []
         dataset = db_cursor.fetchall()
         for row in dataset:
-            post = Post(row['id'], row['user_id'], row['category_id'], row['title'], row['publication_date'], row['content'])
-            user = User(row['user_id'], row['first_name'], row['last_name'], row['email'], row['bio'], row['username'], row['password'], row['profile_image_url'], row['created_on'], row['active'])
+            post = Post(row['id'], row['user_id'], row['category_id'], 
+                        row['title'], row['publication_date'], row['content'])
+            
+            user = User(row['user_id'], row['first_name'], 
+                        row['last_name'], row['email'], 
+                        row['bio'], row['username'], row['password'], 
+                        row['profile_image_url'], row['created_on'], row['active'])
             category = Category(row['category_id'], row['label'])
 
             post.user = user.__dict__
