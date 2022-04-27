@@ -36,16 +36,36 @@ def get_single_post(id):
         WHERE p.id = ?
         """, ( id, ))
 
-        data = db_cursor.fetchone()
 
-        post = Post(data['id'], data['user_id'], data['category_id'], data['title'], data['publication_date'], data['content'])
+        dataset = db_cursor.fetchone()
 
-        user = User(data['user_id'], data['first_name'], data['last_name'], data['email'], data['bio'], data['username'], data['password'], data['profile_image_url'], data['created_on'], data['active'])
+        db_cursor.execute("""
+        SELECT
+            t.id,
+            t.label
+        FROM PostTags pt
+        JOIN Tags t
+            on t.id = pt.tag_id
+        JOIN Posts p
+            on p.id = ?
+        WHERE pt.post_id = p.id
+        GROUP BY t.id
+        """, ( id, ))
 
-        category = Category(data['category_id'], data['label'])
+        data = db_cursor.fetchall()
 
+        tags= []
+
+        for current_tag in data:
+            tag = Tags(current_tag['id'], current_tag['label'])
+            tags.append(tag.__dict__)
+
+        post = Post(dataset['id'], dataset['user_id'], dataset['category_id'], dataset['title'], dataset['publication_date'], dataset['content'])
+        user = User(dataset['user_id'], dataset['first_name'], dataset['last_name'], dataset['email'], dataset['bio'], dataset['username'], dataset['password'], dataset['profile_image_url'], dataset['created_on'], dataset['active'])
+        category = Category(dataset['category_id'], dataset['label'])
         post.user = user.__dict__
         post.category = category.__dict__
+        post.tags = tags
 
 
     return json.dumps(post.__dict__)
@@ -131,6 +151,7 @@ def delete_post(id):
         DELETE FROM Posts
         WHERE id = ?
         """, (id, ))
+
 def get_all_user_posts(id):
     with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
@@ -167,12 +188,14 @@ def get_all_user_posts(id):
         posts = []
         dataset = db_cursor.fetchall()
         for row in dataset:
-            post = Post(row['id'], row['user_id'], row['category_id'], 
+            post = Post(row['id'], row['user_id'], row['category_id'],
                         row['title'], row['publication_date'], row['content'])
+
             
             user = User(row['id'], row['first_name'], 
                         row['last_name'], row['email'], 
                         row['bio'], row['username'], row['password'], 
+
                         row['profile_image_url'], row['created_on'], row['active'])
             category = Category(row['category_id'], row['label'])
 
@@ -285,6 +308,19 @@ def edit_post(id, edited_post):
         """, (edited_post['user_id'], edited_post['category_id'],
               edited_post['title'], edited_post['publication_date'],
               edited_post['content'], id))
+
+        db_cursor.execute("""
+        DELETE FROM PostTags
+        WHERE post_id = ?
+        """, (id, ))
+
+        for tag in edited_post['tags']:
+            db_cursor.execute("""
+            INSERT INTO PostTags
+                (post_id, tag_id)
+            VALUES
+                ( ?, ? );
+            """, (id, tag))
 
         # Were any rows affected?
         # Did the client send an `id` that exists?

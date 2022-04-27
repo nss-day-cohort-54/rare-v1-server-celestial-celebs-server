@@ -6,9 +6,9 @@ CREATE TABLE "Users" (
   "bio" varchar,
   "username" varchar,
   "password" varchar,
-  "profile_image_url" varchar,
   "created_on" date,
-  "active" bit
+  "active" bit,
+  "profile_image_url" varchar
 );
 
 CREATE TABLE "DemotionQueue" (
@@ -82,7 +82,7 @@ CREATE TABLE "Categories" (
   "label" varchar
 );
 
-DROP TABLE Posts
+DROP TABLE Users
 
 INSERT INTO Categories ('label') VALUES ('News');
 INSERT INTO Tags ('label') VALUES ('JavaScript');
