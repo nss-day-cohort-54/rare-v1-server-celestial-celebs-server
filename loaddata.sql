@@ -98,3 +98,4 @@ INSERT INTO PostTags ('post_id', 'tag_id') VALUES (2, 3)
 DELETE FROM Posts
 WHERE id = 9
 
+INSERT INTO Comments ('post_id', 'author_id', 'content') VALUES (2, 1, 'holy heck that is some turkey')
