@@ -191,9 +191,11 @@ def get_all_user_posts(id):
             post = Post(row['id'], row['user_id'], row['category_id'],
                         row['title'], row['publication_date'], row['content'])
 
-            user = User(row['user_id'], row['first_name'],
-                        row['last_name'], row['email'],
-                        row['bio'], row['username'], row['password'],
+            
+            user = User(row['id'], row['first_name'], 
+                        row['last_name'], row['email'], 
+                        row['bio'], row['username'], row['password'], 
+
                         row['profile_image_url'], row['created_on'], row['active'])
             category = Category(row['category_id'], row['label'])
 

@@ -1,6 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from views import get_single_post, get_all_posts, get_all_tags, get_single_tag, get_all_categories, create_category, get_single_category
+from views.coments_requests import get_all_post_comments
 from views.post_request import get_all_user_posts, create_post, get_posts_by_category, edit_post, delete_post
 from views.tags_requests import create_tag, get_all_postTags
 from views.user import create_user, login_user
@@ -111,6 +112,8 @@ class HandleRequests(BaseHTTPRequestHandler):
                 response = get_all_user_posts(value)
             if key == "category_id" and resource == "posts":
                 response = get_posts_by_category(value)
+            if key == "post_id" and resource == "comments":
+                response = get_all_post_comments(value)
 
         self.wfile.write(response.encode())
 
