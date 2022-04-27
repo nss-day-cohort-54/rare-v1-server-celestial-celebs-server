@@ -6,6 +6,7 @@ from views.post_request import get_all_user_posts, create_post, get_posts_by_cat
 from views.tags_requests import create_tag, get_all_postTags
 from views.user import create_user, login_user
 from views.user_requests import get_all_users, get_single_user
+from views.subscription_requests import get_all_subscriptions, get_single_subscription, create_subscription
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -92,6 +93,12 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f'{get_single_user(id)}'
                 else:
                     response = f'{get_all_users()}'
+                    
+            if resource == "subscriptions":
+                if id is not None:
+                    response = f'{get_single_subscription(id)}'
+                else:
+                    response = f'{get_all_subscriptions()}'
 
         # Response from parse_url() is a tuple with 3
         # items in it, which means the request was for
@@ -136,6 +143,8 @@ class HandleRequests(BaseHTTPRequestHandler):
             response = create_post(post_body)
         if resource == 'tags':
             response = create_tag(post_body)
+        if resource == 'subscriptions':
+            response = create_subscription(post_body)
 
         self.wfile.write(response.encode())
 
