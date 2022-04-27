@@ -24,36 +24,48 @@ def get_single_post(id):
             u.bio,
             u.username,
             u.password,
+            u.profile_image_url,
             u.created_on,
             u.active,
-            c.label,
-            t.label
+            c.label
         FROM Posts p
         JOIN Users u
             ON u.id = p.user_id
         JOIN Categories c
             ON c.id = p.category_id
-        JOIN PostTags pt
-            ON p.id = pt.post_id
-        JOIN Tags t
-            ON t.id = pt.tag_id
         WHERE p.id = ?
         """, ( id, ))
 
-        data = db_cursor.fetchone()
 
-        post = Post(data['id'], data['user_id'], data['category_id'], data['title'], data['publication_date'], data['content'])
+        dataset = db_cursor.fetchone()
 
-        user = User(data['user_id'], data['first_name'], data['last_name'], data['email'], data['bio'], data['username'], data['password'], data['created_on'], data['active'])
+        db_cursor.execute("""
+        SELECT
+            t.id,
+            t.label
+        FROM PostTags pt
+        JOIN Tags t
+            on t.id = pt.tag_id
+        JOIN Posts p
+            on p.id = ?
+        WHERE pt.post_id = p.id
+        GROUP BY t.id
+        """, ( id, ))
 
-        category = Category(data['category_id'], data['label'])
+        data = db_cursor.fetchall()
 
-        postTag = PostTags(data['id'], data['post_id'], data['tag_id'])
+        tags= []
 
-        tag = Tags(data['id'], data['label'])
+        for current_tag in data:
+            tag = Tags(current_tag['id'], current_tag['label'])
+            tags.append(tag.__dict__)
 
+        post = Post(dataset['id'], dataset['user_id'], dataset['category_id'], dataset['title'], dataset['publication_date'], dataset['content'])
+        user = User(dataset['user_id'], dataset['first_name'], dataset['last_name'], dataset['email'], dataset['bio'], dataset['username'], dataset['password'], dataset['profile_image_url'], dataset['created_on'], dataset['active'])
+        category = Category(dataset['category_id'], dataset['label'])
         post.user = user.__dict__
         post.category = category.__dict__
+        post.tags = tags
 
 
     return json.dumps(post.__dict__)
@@ -176,8 +188,13 @@ def get_all_user_posts(id):
         posts = []
         dataset = db_cursor.fetchall()
         for row in dataset:
-            post = Post(row['id'], row['user_id'], row['category_id'], row['title'], row['publication_date'], row['content'])
-            user = User(row['user_id'], row['first_name'], row['last_name'], row['email'], row['bio'], row['username'], row['password'], row['profile_image_url'], row['created_on'], row['active'])
+            post = Post(row['id'], row['user_id'], row['category_id'],
+                        row['title'], row['publication_date'], row['content'])
+
+            user = User(row['user_id'], row['first_name'],
+                        row['last_name'], row['email'],
+                        row['bio'], row['username'], row['password'],
+                        row['profile_image_url'], row['created_on'], row['active'])
             category = Category(row['category_id'], row['label'])
 
             post.user = user.__dict__
@@ -222,6 +239,7 @@ def get_posts_by_category(category_id):
             u.bio,
             u.username,
             u.password,
+            u.profile_image_url,
             u.created_on,
             u.active,
             c.label
@@ -237,7 +255,7 @@ def get_posts_by_category(category_id):
         dataset = db_cursor.fetchall()
         for row in dataset:
             post = Post(row['id'], row['user_id'], row['category_id'], row['title'], row['publication_date'], row['content'])
-            user = User(row['user_id'], row['first_name'], row['last_name'], row['email'], row['bio'], row['username'], row['password'], row['profile_image_url'], row['created_on'], row['active'])
+            user = User(row['id'], row['first_name'], row['last_name'], row['email'], row['bio'], row['username'], row['password'], row['profile_image_url'], row['created_on'], row['active'])
             category = Category(row['category_id'], row['label'])
             post.user = user.__dict__
             post.category = category.__dict__
@@ -288,6 +306,19 @@ def edit_post(id, edited_post):
         """, (edited_post['user_id'], edited_post['category_id'],
               edited_post['title'], edited_post['publication_date'],
               edited_post['content'], id))
+
+        db_cursor.execute("""
+        DELETE FROM PostTags
+        WHERE post_id = ?
+        """, (id, ))
+
+        for tag in edited_post['tags']:
+            db_cursor.execute("""
+            INSERT INTO PostTags
+                (post_id, tag_id)
+            VALUES
+                ( ?, ? );
+            """, (id, tag))
 
         # Were any rows affected?
         # Did the client send an `id` that exists?

@@ -98,26 +98,3 @@ INSERT INTO PostTags ('post_id', 'tag_id') VALUES (2, 3)
 DELETE FROM Posts
 WHERE id = 9
 
-SELECT
-            p.id,
-            p.user_id,
-            p.category_id,
-            p.title,
-            p.publication_date,
-            p.content,
-            u.first_name,
-            u.last_name,
-            u.email,
-            u.bio,
-            u.username,
-            u.password,
-            u.profile_image_url,
-            u.created_on,
-            u.active,
-            c.label
-        FROM Posts p
-        JOIN Users u
-            ON u.id = p.user_id
-        JOIN Categories c
-            ON c.id = p.category_id
-        WHERE p.user_id = 1

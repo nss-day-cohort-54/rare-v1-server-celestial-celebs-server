@@ -105,7 +105,9 @@ class HandleRequests(BaseHTTPRequestHandler):
 
             # if key == "q" and resource == "categories":
             #     response = search_entries(value)
-            if key == "user_id":
+            if key == "user_id" and resource == "users":
+                response = get_all_user_posts(value)
+            if key == "user_id" and resource == "posts":
                 response = get_all_user_posts(value)
             if key == "category_id" and resource == "posts":
                 response = get_posts_by_category(value)
