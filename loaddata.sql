@@ -6,9 +6,9 @@ CREATE TABLE "Users" (
   "bio" varchar,
   "username" varchar,
   "password" varchar,
-  "profile_image_url" varchar,
   "created_on" date,
-  "active" bit
+  "active" bit,
+  "profile_image_url" varchar
 );
 
 CREATE TABLE "DemotionQueue" (
@@ -82,7 +82,7 @@ CREATE TABLE "Categories" (
   "label" varchar
 );
 
-DROP TABLE Posts
+DROP TABLE Users
 
 INSERT INTO Categories ('label') VALUES ('News');
 INSERT INTO Tags ('label') VALUES ('JavaScript');
@@ -97,4 +97,8 @@ INSERT INTO PostTags ('post_id', 'tag_id') VALUES (2, 3)
 
 DELETE FROM Posts
 WHERE id = 9
+
+INSERT INTO Comments ('post_id', 'author_id', 'content') VALUES (8, 1, 'holy heck that is some turkey')
+INSERT INTO Comments ('post_id', 'author_id', 'content') VALUES (7, 2, 'agga beeeer')
+INSERT INTO Comments ('post_id', 'author_id', 'content') VALUES (7, 1, 'holy heck moon money')
 
